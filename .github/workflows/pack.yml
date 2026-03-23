@@ -1,0 +1,55 @@
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+env:
+  PACK_NAME: minemoji
+
+jobs:
+    generate-pack:
+        name: Generate Minemoji Pack
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout submodules
+          uses: actions/checkout@v5
+          with:
+            submodules: true
+        - name: Download latest release
+          uses: robinraju/release-downloader@v1
+          with:
+            latest: true
+            fileName: 'minemoji.jar'
+            tarBall: false
+            zipBall: false
+        - id: get-url
+          uses: tuftsrt/get-pages-url@v1
+        - uses: tuftsrt/sphinx-to-branch@v1
+          env:
+            BASEURL: ${{ steps.get-url.outputs.url }}
+        - uses: actions/setup-java@v5
+          with:
+            distribution: 'temurin' # See 'Supported distributions' for available options
+            java-version: '21'
+        - run: >
+            java -cp minemoji.jar com.github.cinnamondev.minemoji.PackMaker.PackMaker 
+            --input-directory ./
+            --output-directory ./site/${PACK_NAME}
+            --prefix ${PACK_NAME}
+            --pack-url ${BASEURL}/${PACK_NAME}.zip
+            --zip-pack --delete-directory
+        - name: serve example json
+          run: cp ./site/${PACK_NAME}/${PACK_NAME}.json ./site/${PACK_NAME}.json
+        - name: Setup Pages
+          uses: actions/configure-pages@v5
+        - name: Upload artifacts
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: './site/'
+        - name: Deploy to github pages
+          id: deployment
+          uses: actions/deploy-pages@v4
