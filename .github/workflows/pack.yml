@@ -31,7 +31,9 @@ jobs:
           with:
             distribution: 'temurin' # See 'Supported distributions' for available options
             java-version: '21'
-        - run: echo $(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')
+        - name: test
+          env: ${{ github.token }}
+          run: echo $(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')
         - run: >
             java -cp minemoji.jar com.github.cinnamondev.minemoji.PackMaker.PackMaker 
             --input-directory ./
