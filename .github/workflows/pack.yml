@@ -27,11 +27,6 @@ jobs:
             fileName: 'minemoji.jar'
             tarBall: false
             zipBall: false
-        - id: get-url
-          uses: tuftsrt/get-pages-url@v1
-        - uses: tuftsrt/sphinx-to-branch@v1
-          env:
-            BASEURL: ${{ steps.get-url.outputs.url }}
         - uses: actions/setup-java@v5
           with:
             distribution: 'temurin' # See 'Supported distributions' for available options
