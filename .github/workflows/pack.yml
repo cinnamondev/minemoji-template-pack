@@ -36,10 +36,10 @@ jobs:
             GH_TOKEN: ${{ github.token }}
           run: >
             java -cp minemoji.jar com.github.cinnamondev.minemoji.PackMaker.PackMaker 
-            --input-directory ./
+            --input-directory ./assets/
             --output-directory ./site/${PACK_NAME}
             --prefix ${PACK_NAME}
-            --pack-url $(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')/${PACK_NAME}.zip
+            --pack-url $(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')${PACK_NAME}.zip
             --zip-pack --delete-directory
         - name: serve example json
           run: cp ./site/${PACK_NAME}/${PACK_NAME}.json ./site/${PACK_NAME}.json
